@@ -4,15 +4,15 @@ from prettytable import PrettyTable  # type: ignore[import]
 from typing import TypeVar, Generic, Sequence, Dict, List, Optional
 
 __all__ = (
-	"CannotMoveException", "ListWalkerElement", "BaseListWalker", "ListWalker1D"
+	"CannotWalkException", "ListWalkerElement", "BaseListWalker", "ListWalker1D"
 )
 T = TypeVar("T")  # For [BaseListWalker.data] generic type
 P = TypeVar("P")  # For [BaseListWalker.cursor] type
 
 
-class CannotMoveException(Exception):
+class CannotWalkException(Exception):
 	"""
-		Raised when the cursor failed to move because blocked by an ignored element.
+		Raised when the cursor failed to walk because blocked by an ignored element.
 	"""
 
 
@@ -79,26 +79,26 @@ class BaseListWalker(ABC, Generic[T, P]):
 		...
 	
 	@abstractmethod
-	def move_left(
+	def walk_left(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, P]:
 		"""
 			Move the [cursor] to the left with respect to [ignored_elements].
-			If [jump] is `False`, the cursor cannot move through an ignored element.
+			If [jump] is `False`, the cursor cannot walk through an ignored element.
 			
-			[IndexError] or [CannotMoveException] may be raised unless [silent].
+			[IndexError] or [CannotWalkException] may be raised unless [silent].
 			In that case, the [cursor] will stay the same.
 		"""
 	
 	@abstractmethod
-	def move_right(
+	def walk_right(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, P]:
 		"""
 			Move the [cursor] to the right with respect to [ignored_elements].
-			If [jump] is `False`, the cursor cannot move through an ignored element.
+			If [jump] is `False`, the cursor cannot walk through an ignored element.
 			
-			[IndexError] or [CannotMoveException] may be raised unless [silent].
+			[IndexError] or [CannotWalkException] may be raised unless [silent].
 			In that case, the [cursor] will stay the same.
 		"""
 
@@ -173,7 +173,7 @@ class ListWalker1D(BaseListWalker[T, int]):
 		
 		return neighbors
 	
-	def move_left(
+	def walk_left(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, int]:
 		position = self.cursor - 1
@@ -191,7 +191,7 @@ class ListWalker1D(BaseListWalker[T, int]):
 			if silent:
 				return self.cursor_element
 			else:
-				raise CannotMoveException()
+				raise CannotWalkException()
 		
 		while element.is_ignored:
 			try:
@@ -206,7 +206,7 @@ class ListWalker1D(BaseListWalker[T, int]):
 		self.cursor = position
 		return element
 	
-	def move_right(
+	def walk_right(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, int]:
 		position = self.cursor + 1
@@ -224,7 +224,7 @@ class ListWalker1D(BaseListWalker[T, int]):
 			if silent:
 				return self.cursor_element
 			else:
-				raise CannotMoveException()
+				raise CannotWalkException()
 		
 		while element.is_ignored:
 			try:
@@ -348,14 +348,14 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 		
 		return neighbors
 	
-	def move_up(
+	def walk_up(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, List[int]]:
 		"""
 			Move the [cursor] up with respect to [ignored_elements].
-			If [jump] is `False`, the cursor cannot move through an ignored element.
+			If [jump] is `False`, the cursor cannot walk through an ignored element.
 			
-			[IndexError] or [CannotMoveException] may be raised unless [silent].
+			[IndexError] or [CannotWalkException] may be raised unless [silent].
 			In that case, the [cursor] will stay the same.
 		"""
 		position = [self.cursor[0] - 1, self.cursor[1]]
@@ -373,7 +373,7 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 			if silent:
 				return self.cursor_element
 			else:
-				raise CannotMoveException()
+				raise CannotWalkException()
 		
 		while element.is_ignored:
 			try:
@@ -388,7 +388,7 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 		self.cursor = position
 		return element
 	
-	def move_right(
+	def walk_right(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, List[int]]:
 		position = [self.cursor[0], self.cursor[1] + 1]
@@ -406,7 +406,7 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 			if silent:
 				return self.cursor_element
 			else:
-				raise CannotMoveException()
+				raise CannotWalkException()
 		
 		while element.is_ignored:
 			try:
@@ -421,14 +421,14 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 		self.cursor = position
 		return element
 	
-	def move_down(
+	def walk_down(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, List[int]]:
 		"""
 			Move the [cursor] down with respect to [ignored_elements].
-			If [jump] is `False`, the cursor cannot move through an ignored element.
+			If [jump] is `False`, the cursor cannot walk through an ignored element.
 			
-			[IndexError] or [CannotMoveException] may be raised unless [silent].
+			[IndexError] or [CannotWalkException] may be raised unless [silent].
 			In that case, the [cursor] will stay the same.
 		"""
 		position = [self.cursor[0] + 1, self.cursor[1]]
@@ -446,7 +446,7 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 			if silent:
 				return self.cursor_element
 			else:
-				raise CannotMoveException()
+				raise CannotWalkException()
 		
 		while element.is_ignored:
 			try:
@@ -461,7 +461,7 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 		self.cursor = position
 		return element
 	
-	def move_left(
+	def walk_left(
 		self, *, jump: bool = True, silent: bool = False
 	) -> ListWalkerElement[T, List[int]]:
 		position = [self.cursor[0], self.cursor[1] - 1]
@@ -479,7 +479,7 @@ class ListWalker2D(BaseListWalker[T, List[int]]):
 			if silent:
 				return self.cursor_element
 			else:
-				raise CannotMoveException()
+				raise CannotWalkException()
 		
 		while element.is_ignored:
 			try:

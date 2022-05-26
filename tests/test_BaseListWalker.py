@@ -3,14 +3,14 @@ import unittest
 sys.path.append("..")
 
 from src.listwalker import (  # noqa E402
-	ListWalker1D, ListWalker2D, ListWalkerElement, CannotMoveException
+	ListWalker1D, ListWalker2D, ListWalkerElement, CannotWalkException
 )
 
 walker1D = ListWalker1D[int]([1, 2, 3, 4, 5])
 walker1D.ignored_elements.append(2)
 walker1D.ignored_elements.append(3)
-walker1D.move_right()
-walker1D.move_right()
+walker1D.walk_right()
+walker1D.walk_right()
 
 walker2D_ignored = [[1, 0], [2, 0], [3, 0], [0, 3]]
 walker2D = ListWalker2D[int]([
@@ -22,7 +22,7 @@ walker2D = ListWalker2D[int]([
 	[26, 27, 28, 29, 30]
 ])
 walker2D.ignored_elements = walker2D_ignored
-walker2D.move_down()
+walker2D.walk_down()
 
 
 class TestListWalker1D(unittest.TestCase):
@@ -59,42 +59,42 @@ class TestListWalker1D(unittest.TestCase):
 		self.assertTrue(neighbors.get("left"))
 		self.assertFalse(neighbors.get("right"))
 	
-	def test_move_left(self) -> None:
+	def test_walk_left(self) -> None:
 		walker1D.cursor = walker1D.size - 1
-		self.assertRaises(CannotMoveException, walker1D.move_left, jump=False)
+		self.assertRaises(CannotWalkException, walker1D.walk_left, jump=False)
 		
-		walker1D.move_left(jump=False, silent=True)
+		walker1D.walk_left(jump=False, silent=True)
 		self.assertEqual(walker1D.cursor_element.value, 5)
 		
-		walker1D.move_left()
+		walker1D.walk_left()
 		self.assertEqual(walker1D.cursor_element.value, 2)
 		
-		walker1D.move_left()
+		walker1D.walk_left()
 		self.assertEqual(walker1D.cursor_element.value, 1)
 		
-		walker1D.move_left(silent=True)
+		walker1D.walk_left(silent=True)
 		self.assertEqual(walker1D.cursor_element.value, 1)
 		
-		self.assertRaises(IndexError, walker1D.move_left)
+		self.assertRaises(IndexError, walker1D.walk_left)
 	
-	def test_move_right(self) -> None:
+	def test_walk_right(self) -> None:
 		walker1D.cursor = 0
 		
-		walker1D.move_right()
+		walker1D.walk_right()
 		self.assertEqual(walker1D.cursor_element.value, 2)
 		
-		self.assertRaises(CannotMoveException, walker1D.move_right, jump=False)
+		self.assertRaises(CannotWalkException, walker1D.walk_right, jump=False)
 		
-		walker1D.move_right(jump=False, silent=True)
+		walker1D.walk_right(jump=False, silent=True)
 		self.assertEqual(walker1D.cursor_element.value, 2)
 		
-		walker1D.move_right()
+		walker1D.walk_right()
 		self.assertEqual(walker1D.cursor_element.value, 5)
 		
-		walker1D.move_right(silent=True)
+		walker1D.walk_right(silent=True)
 		self.assertEqual(walker1D.cursor_element.value, 5)
 		
-		self.assertRaises(IndexError, walker1D.move_right)
+		self.assertRaises(IndexError, walker1D.walk_right)
 
 
 class TestListWalker2D(unittest.TestCase):
@@ -146,81 +146,81 @@ class TestListWalker2D(unittest.TestCase):
 		self.assertTrue(neighbors.get("down"))
 		self.assertFalse(neighbors.get("left"))
 	
-	def test_move_up(self) -> None:
+	def test_walk_up(self) -> None:
 		walker2D.cursor = [4, 0]
-		self.assertRaises(CannotMoveException, walker2D.move_up, jump=False)
+		self.assertRaises(CannotWalkException, walker2D.walk_up, jump=False)
 		
-		walker2D.move_up(jump=False, silent=True)
+		walker2D.walk_up(jump=False, silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 21)
 		
-		walker2D.move_up()
+		walker2D.walk_up()
 		self.assertEqual(walker2D.cursor_element.value, 1)
 		
-		walker2D.move_up(silent=True)
+		walker2D.walk_up(silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 1)
 		
-		self.assertRaises(IndexError, walker2D.move_up)
+		self.assertRaises(IndexError, walker2D.walk_up)
 	
-	def test_move_right(self) -> None:
+	def test_walk_right(self) -> None:
 		walker2D.cursor = [0, 0]
 		
-		walker2D.move_right()
+		walker2D.walk_right()
 		self.assertEqual(walker2D.cursor_element.value, 2)
 		
-		walker2D.move_right()
+		walker2D.walk_right()
 		self.assertEqual(walker2D.cursor_element.value, 3)
 		
-		self.assertRaises(CannotMoveException, walker2D.move_right, jump=False)
+		self.assertRaises(CannotWalkException, walker2D.walk_right, jump=False)
 		
-		walker2D.move_right(jump=False, silent=True)
+		walker2D.walk_right(jump=False, silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 3)
 		
-		walker2D.move_right()
+		walker2D.walk_right()
 		self.assertEqual(walker2D.cursor_element.value, 5)
 		
-		walker2D.move_right(silent=True)
+		walker2D.walk_right(silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 5)
 		
-		self.assertRaises(IndexError, walker2D.move_right)
+		self.assertRaises(IndexError, walker2D.walk_right)
 	
-	def test_move_down(self) -> None:
+	def test_walk_down(self) -> None:
 		walker2D.cursor = [0, 0]
-		self.assertRaises(CannotMoveException, walker2D.move_down, jump=False)
+		self.assertRaises(CannotWalkException, walker2D.walk_down, jump=False)
 		
-		walker2D.move_down(jump=False, silent=True)
+		walker2D.walk_down(jump=False, silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 1)
 		
-		walker2D.move_down()
+		walker2D.walk_down()
 		self.assertEqual(walker2D.cursor_element.value, 21)
 		
-		walker2D.move_down()
+		walker2D.walk_down()
 		self.assertEqual(walker2D.cursor_element.value, 26)
 		
-		walker2D.move_down(silent=True)
+		walker2D.walk_down(silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 26)
 		
-		self.assertRaises(IndexError, walker2D.move_down)
+		self.assertRaises(IndexError, walker2D.walk_down)
 	
-	def test_move_left(self) -> None:
+	def test_walk_left(self) -> None:
 		walker2D.cursor = [0, 4]
-		self.assertRaises(CannotMoveException, walker2D.move_left, jump=False)
+		self.assertRaises(CannotWalkException, walker2D.walk_left, jump=False)
 		
-		walker2D.move_left(jump=False, silent=True)
+		walker2D.walk_left(jump=False, silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 5)
 		
-		walker2D.move_left()
+		walker2D.walk_left()
 		self.assertEqual(walker2D.cursor_element.value, 3)
 		
-		walker2D.move_left()
+		walker2D.walk_left()
 		self.assertEqual(walker2D.cursor_element.value, 2)
 		
-		walker2D.move_left()
+		walker2D.walk_left()
 		self.assertEqual(walker2D.cursor_element.value, 1)
 		
-		walker2D.move_left(silent=True)
+		walker2D.walk_left(silent=True)
 		self.assertEqual(walker2D.cursor_element.value, 1)
 		
-		self.assertRaises(IndexError, walker2D.move_left)
+		self.assertRaises(IndexError, walker2D.walk_left)
 
 
 if __name__ == "__main__":
